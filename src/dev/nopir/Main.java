@@ -9,7 +9,7 @@ public class Main extends JFrame {
 	public static int height;
 	
 	public Main(int width, int height) {
-		Main.width = width;
+		Main.width = width; //yeet
 		Main.height = height;
 		
 		Display display = new Display(this);
