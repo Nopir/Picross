@@ -29,6 +29,8 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 	
 	boolean check = false;
 	
+	boolean XToggle = false;
+	
 	class Tile {
 		public int x, y, size;
 		
@@ -36,8 +38,9 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 		
 		public boolean isBomb = false;
 		
-		public boolean isLeftClicked = false;
-		public boolean isRightClicked = false;
+		public boolean isClicked = false;
+		public boolean fillInSquare = true;
+		//public boolean isRightClicked = false;
 		
 		public Tile(int x, int y, int size) {
 			this.x = x;
@@ -71,9 +74,11 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 		for(int j = 0; j < tiles[i].length; j++) {
 			tile = tiles[i][j];
 			
-			g.setColor(Color.lightGray);
+			g.setColor(Color.lightGray); 
 			
-			if(tile.isLeftClicked)
+			if(tile.isClicked && !tile.fillInSquare) //something wrong here too tired to figure this shit out
+				g.drawString("X",tile.x+tile.size/2,tile.y+tile.size/2);
+			else if(tile.isClicked && tile.fillInSquare)
 				g.setColor(Color.black);
 			
 			
@@ -82,16 +87,22 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 			g.setColor(Color.black);
 			g.drawRect(tile.x,tile.y,tile.size,tile.size);
 			
-			if(tile.isRightClicked)
-				g.drawString("X",tile.x+tile.size/2,tile.y+tile.size/2);
+			if(XToggle)
+				g.drawString("toggle on",10,10);
+			else
+				g.drawString("toggle off",10,10);
+			
+			//if(tile.isRightClicked)
+			
+			//check stuff redundant
 			
 			if(!check) continue;
 			
 			g.setColor(new Color(230,100,100));
 			
-			if((tile.isLeftClicked && tile.isBomb))
+			if((tile.isClicked && tile.isBomb))
 				g.setColor(new Color(100,230,100));
-			else if((!tile.isLeftClicked && !tile.isBomb))
+			else if((!tile.isClicked && !tile.isBomb))
 				g.setColor(Color.lightGray);
 			
 			g.fillRect(tile.x,tile.y,tile.size,tile.size);
@@ -172,15 +183,24 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) check = true;
 		
 		if(e.getKeyCode() == KeyEvent.VK_F1) reset();
+		
+		if(e.getKeyCode() == KeyEvent.VK_F2) XToggle = !XToggle;
 	}
 	
 	public void mousePressed(MouseEvent e) {
+		
+		
 		for(int i = 0; i < tiles.length; i++)
 		for(int j = 0; j < tiles[i].length; j++) {
 			Tile tile = tiles[i][j];
 			
-			if(!tile.box.contains(e.getPoint())) continue;
+			if(tile.box.contains(e.getPoint())) {
+				tile.isClicked = !tile.isClicked;
+				
+				tile.fillInSquare = XToggle;
+			}
 			
+			/*
 			if(tile.isLeftClicked || tile.isRightClicked) {
 				tile.isLeftClicked = false;
 				tile.isRightClicked = false;
@@ -191,6 +211,7 @@ public class Display extends JPanel implements KeyListener, MouseListener, Mouse
 				tile.isRightClicked = !tile.isRightClicked;
 				tile.isLeftClicked = false;
 			}
+			*/
 		}
 	}
 	
